@@ -1,17 +1,22 @@
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AppProvider } from "./context/AppContext";
+
+import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Analytics from "./pages/Analytics";
-import Navbar from "./components/Navbar";
-import { AppProvider } from "./context/AppContext";
+import Orders from "./pages/Orders";
 
 export default function App() {
   return (
-    <AppProvider>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/analytics" element={<Analytics />} />
-      </Routes>
-    </AppProvider>
+    <BrowserRouter>
+      <AppProvider>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/orders" element={<Orders />} />
+        </Routes>
+      </AppProvider>
+    </BrowserRouter>
   );
 }
