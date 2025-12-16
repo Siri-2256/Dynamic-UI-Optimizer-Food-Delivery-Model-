@@ -1,11 +1,15 @@
 import { useApp } from "../context/AppContext";
+import { trackEvent } from "../utils/tracker";
 
 export default function RestaurantCard({ restaurant }) {
   const { trackClick } = useApp();
 
   return (
     <div
-      onClick={trackClick}
+      onClick={() => {
+        trackEvent(restaurant.name);
+        trackClick();
+      }}
       style={{
         padding: "15px",
         backgroundColor: "#fff",
@@ -21,4 +25,3 @@ export default function RestaurantCard({ restaurant }) {
     </div>
   );
 }
-
