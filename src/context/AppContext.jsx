@@ -1,27 +1,69 @@
-* {
-  box-sizing: border-box;
+import { createContext, useContext, useEffect, useState } from "react";
+
+const AppContext = createContext();
+
+export function AppProvider({ children }) {
+  // ---------- USER INTERACTION ----------
+  const [clicks, setClicks] = useState(0);
+  const [reward, setReward] = useState(0);
+  const [engagementTime, setEngagementTime] = useState(0);
+
+  // ---------- CART & ORDERS ----------
+  const [cart, setCart] = useState([]);
+  const [orders, setOrders] = useState([]);
+
+  // ---------- TRACK ENGAGEMENT TIME ----------
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setEngagementTime((t) => t + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // ---------- TRACK CLICK ----------
+  const trackClick = () => {
+    setClicks((c) => c + 1);
+    setReward((r) => r + 1);
+  };
+
+  // ---------- CART LOGIC ----------
+  const addToCart = (item) => {
+    setCart((prev) => [...prev, item]);
+    trackClick();
+  };
+
+  const removeFromCart = (index) => {
+    setCart((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // ---------- ORDER LOGIC ----------
+  const placeOrder = () => {
+    if (cart.length === 0) return;
+    setOrders((prev) => [...prev, ...cart]);
+    setCart([]);
+    setReward((r) => r + 10); // reward for ordering
+  };
+
+  return (
+    <AppContext.Provider
+      value={{
+        clicks,
+        reward,
+        engagementTime,
+        cart,
+        orders,
+        trackClick,
+        addToCart,
+        removeFromCart,
+        placeOrder,
+      }}
+    >
+      {children}
+    </AppContext.Provider>
+  );
 }
 
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
-    sans-serif;
-  background-color: #f7f7f7;
-  color: #222;
+export function useApp() {
+  return useContext(AppContext);
 }
-
-button {
-  cursor: pointer;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 6px;
-  background-color: #ff5200;
-  color: white;
-  font-weight: 600;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
